@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+ 
+<vdb name="PHONETIC_ALPHABET_SECURE" version="1">
+               <description>Example OData service</description>
+               <model name="PHONETIC_ALPHABET_VIEW" type="VIRTUAL">
+                              <metadata type="DDL"><![CDATA[
+                             
+CREATE VIEW PHONETIC_ALPHABET (  PHONETIC_ALPHABET_ID string, 
+                                 LETTER string, 
+                                 CODE_WORD string,
+                                 constraint PK_PHONETIC_ALPHABET primary key (PHONETIC_ALPHABET_ID)
+                              ) 
+AS SELECT CONVERT(ID, STRING) AS PHONETIC_ALPHABET_ID, LETTER as LETTER, CODE_WORD as CODE_WORD FROM phoneticAlphabet;
+
+CREATE VIRTUAL PROCEDURE phoneticAlphabet() RETURNS TABLE( ID integer, LETTER string, CODE_WORD string)
+AS
+BEGIN
+(
+(SELECT 1 as ID, 'A' as LETTER, 'Alfa' as CODE_WORD)
+UNION ALL (SELECT         2 as ID, 'B' as LETTER, 'Bravo' as CODE_WORD)
+UNION ALL (SELECT         3 as ID, 'C' as LETTER, 'Charlie' as CODE_WORD)
+UNION ALL (SELECT         4 as ID, 'D' as LETTER, 'Delta' as CODE_WORD)
+UNION ALL (SELECT         5 as ID, 'E' as LETTER, 'Echo' as CODE_WORD)
+UNION ALL (SELECT         6 as ID, 'F' as LETTER, 'Foxtrot' as CODE_WORD)
+UNION ALL (SELECT         7 as ID, 'G' as LETTER, 'Golf' as CODE_WORD)
+UNION ALL (SELECT         8 as ID, 'H' as LETTER, 'Hotel' as CODE_WORD)
+UNION ALL (SELECT         9 as ID, 'I' as LETTER, 'India' as CODE_WORD)
+UNION ALL (SELECT         10 as ID, 'J' as LETTER, 'Juliett' as CODE_WORD)
+UNION ALL (SELECT         11 as ID, 'K' as LETTER, 'Kilo' as CODE_WORD)
+UNION ALL (SELECT         12 as ID, 'L' as LETTER, 'Lima' as CODE_WORD)
+UNION ALL (SELECT         13 as ID, 'M' as LETTER, 'Mike' as CODE_WORD)
+UNION ALL (SELECT         14 as ID, 'N' as LETTER, 'November' as CODE_WORD)
+UNION ALL (SELECT         15 as ID, 'O' as LETTER, 'Oscar' as CODE_WORD)
+UNION ALL (SELECT         16 as ID, 'P' as LETTER, 'Papa' as CODE_WORD)
+UNION ALL (SELECT         17 as ID, 'Q' as LETTER, 'Quebec' as CODE_WORD)
+UNION ALL (SELECT         18 as ID, 'R' as LETTER, 'Romeo' as CODE_WORD)
+UNION ALL (SELECT         19 as ID, 'S' as LETTER, 'Sierra' as CODE_WORD)
+UNION ALL (SELECT         20 as ID, 'T' as LETTER, 'Tango' as CODE_WORD)
+UNION ALL (SELECT         21 as ID, 'U' as LETTER, 'Uniform' as CODE_WORD)
+UNION ALL (SELECT         22 as ID, 'V' as LETTER, 'Victor' as CODE_WORD)
+UNION ALL (SELECT         23 as ID, 'W' as LETTER, 'Whiskey' as CODE_WORD)
+UNION ALL (SELECT         24 as ID, 'X' as LETTER, 'X-ray' as CODE_WORD)
+UNION ALL (SELECT         25 as ID, 'Y' as LETTER, 'Yankee' as CODE_WORD)
+UNION ALL (SELECT         26 as ID, 'Z' as LETTER, 'Zulu' as CODE_WORD)
+);
+END
+                ]]>
+                              </metadata>
+               </model>
+      <data-role name="AuthenicatedUser">
+        <description>Allow read only</description>
+
+        <permission>
+            <resource-name>PHONETIC_ALPHABET_VIEW.PHONETIC_ALPHABET</resource-name>
+            <allow-read>true</allow-read>
+        </permission>
+        <!--
+      <permission>
+            <resource-name>PHONETIC_ALPHABET_VIEW.PHONETIC_ALPHABET.CODE_WORD</resource-name>
+            <allow-read>false</allow-read>
+        </permission>
+      -->
+
+        <mapped-role-name>user</mapped-role-name>
+
+    </data-role>
+</vdb>
