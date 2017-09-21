@@ -12,13 +12,10 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Properties;
 
-import org.teiid.client.plan.PlanNode;
-import org.teiid.jdbc.TeiidStatement;
-
 public class Main {
 
 	String username;// = "teiidUser";
-	String password;// = "jboss@dm1n";
+	String password;// = "XXXX";
 	String url;// = "jdbc:teiid:ModeShape@mm://localhost:31000";
 	String query;// = "select * from sys.tables";
 
@@ -34,9 +31,9 @@ public class Main {
 			if (args.length != 4){
 				System.out.println("Usage: java local.Main \"jdbc:teiid:VDB@mm://HOSTNAME:PORT\" \"USER\" \"PASSOWRD\" \"select * from sys.tables\"");
 			}
-			System.out.println(args);
+			Class.forName("org.teiid.jdbc.TeiidDriver");
 			new Main(args[0], args[1], args[2], args[3]).executeQuery();
-		} catch (SQLException | IOException e) {
+		} catch (SQLException | IOException | ClassNotFoundException e) {
 			e.printStackTrace();
 			throw new RuntimeException(e);
 		}
