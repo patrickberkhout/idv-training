@@ -3,6 +3,8 @@ package local;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -11,6 +13,9 @@ import java.sql.Statement;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Properties;
+
+import org.teiid.client.plan.PlanNode;
+import org.teiid.jdbc.TeiidStatement;
 
 public class Main {
 
@@ -29,7 +34,7 @@ public class Main {
 	public static void main(String[] args)  {
 		try {
 			if (args.length != 4){
-				System.out.println("Usage: java local.Main \"jdbc:teiid:VDB@mm://HOSTNAME:PORT\" \"USER\" \"PASSOWRD\" \"select * from sys.tables\"");
+				System.out.println("Usage: java local.Main \"jdbc:teiid:VDB@mm://HOSTNAME:PORT\" \"USER\" \"PASSOWRD\" input/in.sql");
 			}
 			Class.forName("org.teiid.jdbc.TeiidDriver");
 			new Main(args[0], args[1], args[2], args[3]).executeQuery();
@@ -40,11 +45,29 @@ public class Main {
 		
 	}
 	public  void executeQuery() throws SQLException, IOException{
+		
+		String queryString = new String(Files.readAllBytes(Paths.get(query)));
 		Date start = Calendar.getInstance().getTime();
-		System.out.println("Start time: " + start);
 		Statement statement = getConnection().createStatement();
+	
 		statement.execute("set showplan debug");
-		ResultSet mainQ = statement.executeQuery(query);
+		ResultSet mainQ = statement.executeQuery(queryString);
+		
+		TeiidStatement tstatement = statement.unwrap(TeiidStatement.class);
+		PlanNode queryPlan = tstatement.getPlanDescription();
+		new File("output").mkdirs();
+		
+		
+		write("output/plan.txt", queryPlan.toString());
+		write("output/plan.xml", queryPlan.toXml());
+		Files.deleteIfExists(Paths.get("output/debug.txt"));
+
+		
+		System.out.println("Plan is written to output folder.");
+		System.out.println("Now we are executing the query to produce debug output.");
+		System.out.println("CTRL-C to stop.");
+		System.out.println("Start time: " + start);
+
 		Long rowCount = 0L;
 		while(mainQ.next()){
 			rowCount++;
@@ -58,9 +81,6 @@ public class Main {
 
 		ResultSet planQ = statement.executeQuery("show plan");
 		planQ.next();
-		new File("output").mkdirs();
-		write("output/plan.txt", planQ.getString(1));
-		write("output/plan.xml", planQ.getString(2));
 		write("output/debug.txt", planQ.getString(3));
 
 	}

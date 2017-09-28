@@ -26,16 +26,30 @@
 					</archive>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>3.1.0</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 	<dependencies>
 		<dependency>
-			<groupId>org.teiid</groupId>
-			<artifactId>jboss-dv-teiid-jdbc</artifactId>
-			<version>1.0</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/lib/jboss-dv-6.3.0-teiid-jdbc.jar</systemPath>
+			<groupId>org.jboss.teiid</groupId>
+			<artifactId>teiid-jdbc</artifactId>
+			<version>8.12.5.redhat-8</version>
 		</dependency>
+
+
+
 	</dependencies>
 </project>
 
