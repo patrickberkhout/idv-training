@@ -4,7 +4,7 @@
 <property name="validationDateTime" value="Wed Oct 25 14:31:58 CEST 2017"/>
 <property name="validationVersion" value="8.12.5"/>
 <model name="FinancialService">
-<source connection-jndi-name="java:/FinancialService" name="FinancialService" translator-name="FinancialService_ws"/>
+<source connection-jndi-name="java:/FinancialSoapDS" name="FinancialService" translator-name="FinancialService_ws"/>
 <metadata type="DDL"><![CDATA[
 
 CREATE FOREIGN PROCEDURE invoke (

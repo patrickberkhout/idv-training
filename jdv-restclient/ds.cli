@@ -1,0 +1,4 @@
+/subsystem=resource-adapters/resource-adapter=ProductRestDS:add(module=org.jboss.teiid.resource-adapter.webservice)
+/subsystem=resource-adapters/resource-adapter=ProductRestDS/connection-definitions=wsDS:add(jndi-name="java:/ProductRestDS", class-name=org.teiid.resource.adapter.ws.WSManagedConnectionFactory, enabled=true, use-java-context=true)
+/subsystem=resource-adapters/resource-adapter=ProductRestDS/connection-definitions=wsDS/config-properties=EndPoint:add(value="http://localhost:8180/jee-template-webapp/rest/financial/product/")
+/subsystem=resource-adapters/resource-adapter=ProductRestDS:activate
