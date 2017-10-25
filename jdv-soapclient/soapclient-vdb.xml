@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<vdb name="soapclient" version="1">
+<description/>
+<property name="validationDateTime" value="Wed Oct 25 14:31:58 CEST 2017"/>
+<property name="validationVersion" value="8.12.5"/>
+<model name="FinancialService">
+<source connection-jndi-name="java:/FinancialService" name="FinancialService" translator-name="FinancialService_ws"/>
+<metadata type="DDL"><![CDATA[
+
+CREATE FOREIGN PROCEDURE invoke (
+	IN binding string,
+	IN action string(4000),
+	IN request xml,
+	IN endpoint string(4000),
+	IN stream boolean,
+	OUT result xml RESULT
+) OPTIONS(UPDATECOUNT '1');
+
+]]></metadata>
+</model>
+<model name="FinancialServiceView" type="VIRTUAL">
+<property name="imports" value="FinancialService"/>
+<metadata type="DDL"><![CDATA[
+SET NAMESPACE 'http://teiid.org/rest' AS REST;
+
+
+CREATE VIRTUAL PROCEDURE GetProducts_request (
+) RETURNS
+	TABLE (
+		xml_out xml
+) OPTIONS(UPDATECOUNT '1')
+	AS
+BEGIN
+	SELECT XMLELEMENT(NAME "tns:GetProducts", XMLNAMESPACES('http://local/FinancialService/' AS tns)) AS xml_out;
+END;
+
+CREATE VIRTUAL PROCEDURE GetProducts_response (
+	IN xml_in xml NOT NULL
+) RETURNS
+	TABLE (
+		productid string(4000),
+		cuisp string(4000),
+		symbol string(4000),
+		symboltype string(4000)
+) OPTIONS(UPDATECOUNT '1')
+	AS
+BEGIN
+	EXEC SYSADMIN.logMsg(level => 'INFO', context => 'local', msg => FinancialServiceView.GetProducts_response.xml_in);
+	SELECT t.* FROM XMLTABLE(XMLNAMESPACES('http://local/FinancialService/' AS ns), '/ns:GetProductsResponse/product' PASSING FinancialServiceView.GetProducts_response.xml_in COLUMNS productid string PATH '/@productid', cuisp string PATH '/@cuisp', symbol string PATH '/@symbol', symboltype string PATH '/@symboltype') AS t;
+END;
+
+CREATE VIRTUAL PROCEDURE GetProducts (
+) RETURNS
+	TABLE (
+		productid string(4000),
+		cuisp string(4000),
+		symbol string(4000),
+		symboltype string(4000)
+) OPTIONS(UPDATECOUNT '1')
+	AS
+BEGIN
+	SELECT t.* FROM TABLE(EXEC FinancialServiceView.GetProducts_request()) AS request, TABLE(EXEC FinancialService.invoke(binding => 'SOAP11', action => 'http://local/FinancialService/GetProducts', request => request.xml_out, endpoint => null, stream => TRUE)) AS response, TABLE(EXEC FinancialServiceView.GetProducts_response(response.result)) AS t;
+END;
+
+]]></metadata>
+</model>
+<translator description="" name="FinancialService_ws" type="ws">
+<property name="DefaultBinding" value="SOAP11"/>
+<property name="DefaultServiceMode" value="PAYLOAD"/>
+</translator>
+</vdb>
+

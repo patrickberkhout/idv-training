@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!-- 
+http://localhost:8080/odata4/PHONETIC_ALPHABET_SECURE/PHONETIC_ALPHABET_VIEW/PHONETIC_ALPHABET?$format=json
+-->
  
 <vdb name="PHONETIC_ALPHABET_SECURE" version="1">
                <description>Example OData service</description>
